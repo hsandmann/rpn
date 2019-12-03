@@ -52,6 +52,9 @@ def calculate(sentence):
         if s not in "0123456789.+-*/^ˆ() ":
             raise Exception("posicao ", i)
         
+        if s == " " and sentence[i - 1] in "0123456789." and sentence[i - 1] in "0123456789.":
+            raise Exception("espaçamento incorreto entre numeros na posicao ", i)
+
         if s == " ":
             continue
 
@@ -102,8 +105,8 @@ def calculate(sentence):
         raise Exception("parenteses mal abertos")
 
 
-sentence = "(- 1 0 + ( 1 0 ^ 2 - 4 * 2 * 2 ) ˆ ( 2 ) ) / ( 2 + 3 .5)"
-sentence = "(-10+(10ˆ2-4*2*2)ˆ(2))/(2+3.5)"
+# sentence = "(- 1 0 + ( 1 0 ^ 2 - 4 * 2 * 2 ) ˆ ( 2 ) ) / ( 2 + 3 .5)"
+# sentence = "(-10+(10ˆ2-4*2*2)ˆ(2))/(2+3.5)"
 sentence = input()
 print(calculate(sentence))
 
