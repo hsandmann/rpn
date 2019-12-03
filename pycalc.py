@@ -1,6 +1,6 @@
 
 
-DOPER = {3: "ˆ", 2: "*/", 1: "+-"}
+DOPER = {3: "ˆ^", 2: "*/", 1: "+-"}
 
 
 def play(rpn, oper):
@@ -16,7 +16,7 @@ def play(rpn, oper):
         rpn.append(a * b)
     elif oper == "/":
         rpn.append(a / b)
-    elif oper == "ˆ":
+    elif oper == "^" or oper == "ˆ":
         rpn.append(a ** b)
     return rpn
 
@@ -44,12 +44,16 @@ def calculate(sentence):
     lvalue = []
     lrpn = []
     loper = []
-
+    openCount = 0
+    closeCount = 0
     for i in range(len(sentence)):
 
         s = sentence[i]
-        if s not in "0123456789.+-*/ˆ() ":
+        if s not in "0123456789.+-*/^ˆ() ":
             raise Exception("posicao ", i)
+        
+        if s == " ":
+            continue
 
         if s in "0123456789.":
             lvalue.append(s)
@@ -59,9 +63,11 @@ def calculate(sentence):
             lrpn.append(compose(lvalue))
 
         if s == "(":
+            openCount = openCount + 1
             loper.append(s)
             continue
         elif s == ")":
+            closeCount = closeCount + 1
             if len(loper) == 0:
                 raise Exception("posicao ", i)
 
@@ -73,8 +79,6 @@ def calculate(sentence):
             loper.pop()
             continue
 
-        elif s == " ":
-            pass
         else:
 
             while len(loper) != 0:
@@ -92,9 +96,14 @@ def calculate(sentence):
     while len(loper) > 0:
         lrpn = play(lrpn, loper.pop())
 
-    return lrpn.pop()
+    if closeCount == openCount:
+        return lrpn.pop()
+    else:
+        raise Exception("parenteses mal abertos")
 
 
+sentence = "(- 1 0 + ( 1 0 ^ 2 - 4 * 2 * 2 ) ˆ ( 2 ) ) / ( 2 + 3 .5)"
 sentence = "(-10+(10ˆ2-4*2*2)ˆ(2))/(2+3.5)"
+sentence = input()
 print(calculate(sentence))
 
